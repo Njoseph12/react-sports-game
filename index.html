@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>React Sports Game</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- include an element for ReactDOM to attach our React-generated elements to -->
+    <div id="root"></div>
+
+    <!-- include React and ReactDOM -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+    <!-- include Babel standalone so we can process JSX in React.createElement stuff -->
+    <script
+      crossorigin
+      src="https://unpkg.com/babel-standalone@6/babel.min.js"
+    ></script>
+
+    <!-- include our JS+JSX for the React Appliccation -->
+    <script type="text/babel">
+      // An App component under which all other components will be added
+      class Team extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
+            shots: 0,
+            score: 0,
+          };
+          this.shotSound = new Audio("./cwdboo.mp3");
+          this.scoreSound = new Audio("./cwdaaaAah.mp3");
+        }
+
+        shotHandler = () => {
+          let score = this.state.score;
+          this.shotSound.play();
+
+          if (Math.random() > 0.5) {
+            score += 1;
+
+            setTimeout(() => {
+              this.scoreSound.play();
+            }, 300);
+          }
+
+          this.setState((state, props) => ({
+            shots: state.shots + 1,
+            score,
+          }));
+        };
+
+        render() {
+          let shotPercentageDiv;
+          if (this.state.shots) {
+            const shotPercentage = Math.round(
+              (this.state.score / this.state.shots) * 100
+            );
+            shotPercentageDiv = (
+              <div>
+                <strong>shooting %: {shotPercentage} </strong>
+              </div>
+            );
+          }
+
+          return (
+            <div className="Team">
+              <h2>{this.props.name}</h2>
+              <div className="identity">
+                <img src={this.props.logo} alt={this.props.name} />
+              </div>
+
+              <div>
+                <strong>Shots:</strong> {this.state.shots}
+              </div>
+              <div>
+                <strong>Score:</strong> {this.state.score}
+              </div>
+              {shotPercentageDiv}
+              <button onClick={this.shotHandler}>Shoot!</button>
+            </div>
+          );
+        }
+      }
+
+      function Game(props) {
+        return (
+          <div className="game">
+            <h1>Welcome to {props.venue}</h1>
+            <div className="stats">
+              <Team
+                name={props.visitingTeam.name}
+                logo={props.visitingTeam.logoSrc}
+              />
+              <div className="versus">
+                <h1>VS</h1>
+              </div>
+              <Team name={props.homeTeam.name} logo={props.homeTeam.logoSrc} />
+            </div>
+          </div>
+        );
+      }
+
+      function App(props) {
+        const tigers = {
+          name: "pickerington tigers",
+          logoSrc:
+            "https://www.outlookindia.com/outlooktraveller/resizer.php?src=https://www.outlookindia.com/outlooktraveller/public/uploads/articles/explore/shutterstock_1135230113.jpg&w=500&h=400",
+        };
+        const panthers = {
+          name: "pickerington panthers",
+          logoSrc:
+            "https://m.media-amazon.com/images/M/MV5BNjk4N2Q1YzAtYWY4Yy00NGI4LWI5M2YtYmMxZmUwMzEwYWMwXkEyXkFqcGdeQXVyMjkwMzc3Mzg@._V1_.jpg",
+        };
+        const gators = {
+          name: "baltimore gators",
+          logoSrc:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeOchbtL726JAHZF8esQdd5nWtoD5YQRgDcQ&usqp=CAU",
+        };
+        const eagles = {
+          name: "columbus eagles",
+          logoSrc:
+            "data:image/jpeg;base64,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",
+        };
+        return (
+          <div className="App">
+            <Game
+              venue="union 525 Gem"
+              homeTeam={tigers}
+              visitingTeam={panthers}
+            />
+            <Game
+              venue="sheridan arena"
+              homeTeam={gators}
+              visitingTeam={eagles}
+            />
+          </div>
+        );
+      }
+
+      // Render the App
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
